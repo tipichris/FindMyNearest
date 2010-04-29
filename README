@@ -1,0 +1,207 @@
+           FindMyNearest
+
+FindMyNearest is a PHP class for working with UK postcodes, and 
+in particular for calculating the distance between two postcodes.
+FindMyNearest supports several alternative data sources through
+drivers. Currently data can be got from a delimited text file, a
+mysql database or through the web API at www.uk-postcodes.com
+
+FindMyNearest is generally not to fussy about the formatting of 
+postcodes. It accepts any case, spaces between parts or not and
+partial postcodes. It even corrects the letter O at the beginning
+of an inward part, changing it to the nubmer 0.
+
+If the backend datasource contains location data for 
+partial postcodes these are used if an exact match can't be found.
+
+Synopsis
+========
+
+require 'FindMyNearest.php';
+
+$fmn = FindMyNearest::factory('textfile', array('datafile' => 'postcodes.txt'));
+
+$goodcode = $fmn->validcode('SW1A 1AA');    // Check if we know about a code
+
+$distance = $fmn->calc_distance('SW1A 1AA', 'CV32 5HZ'); // calculate distance
+
+if ($distance === false) {
+  print "The was an error " . $fmn->lasterror();
+}
+
+Methods
+=======
+
+factory(string $driver, array $params)
+
+  Create a new instance. $driver is currently one of 'textfile', 'mysql' 
+  or 'uk_postcodes'. Valid values for $params depend on the driver chosen.
+  
+loaddata()
+
+  Initialise the connection to the back end. This must always be called
+  before any functions needing to look up postcodes can be called.
+  
+set_inoutsep(string $sep)
+
+  Sets the value of the separator between outward (SW1A) and inward (1AA) 
+  parts of the postcode data. The default depends on the driver. It is a
+  single space usually, but an empty string for uk_postcodes. The use of 
+  an empty string is not recommended if your data also includes means or
+  midpoints for districts and sectors, because this can be ambiguous. Eg
+  'B11' could be either the district B11 or the sector B1 1.
+
+use_wgs84()
+
+  Indicates that the geo data is in wgs84 (latitude and longitude) format
+  Note that when using the mysql driver if you do not specify the sql 
+  parameter in the paramaters passed to factory() and you are using wgs84 you
+  must call use_wgs84() *before* calling loaddata. This is because the default
+  SQL is dependent on the co-ordinate scheme being used.
+  
+use_osgb36()
+
+  Indicates that the geo data is in osgb36 (British national grid) format.
+  This is the default.
+
+  Note that the uk_postcodes driver (which uses http://www.uk-postcodes.com)
+  can provide data in either wgs84 or osgb36. The latter makes distance
+  calculations less demanding
+
+validcode(string $postcode)
+
+  Tests if a postcode is valid and known in the database. Returns the found
+  code on success, false on failure. 
+
+  If the full code is not found, checks will be made for matches by sector
+  (SW1A 1), district (SW1A) and area (SW1). The return value is the best 
+  match.
+
+set_grain(int $grain)
+
+  Sets the smallest unit that will be checked for by validcode()
+    1: Area only: SW 
+    2: District: SW1A
+    3: Sector: SW1A 1
+    4: Unit: SW1A 1AA
+
+getgeodata(string $postcode)
+  
+  Returns an array containing the location of the postcode. The elements are
+  (eastings, northings) for osgb36 or (latitude, longitude) for wgs84
+
+splitpostcode(string $postcode)
+  
+  Takes a postcode or partial postcode and attempts to split it into 
+  component parts. Returns an array:
+
+      [0] => Area,
+      [1] => District
+      [2] => Sector
+      [3] => Unit
+
+    eg, for SW1A 1AA
+      [0] => SW
+      [1] => 1A
+      [2] => 1
+      [3] => AA
+  
+  Returns false on failure
+
+calc_distance (string $fromcode, string $tocode[, array $options])
+  
+  calculate the distance between $fromcode and $tocode. 
+  $options is an optional array:
+    unit => 'miles'|'km'    The unit to return the distance in (default miles)
+    decimal => int  The number of decimal places (defalt 0)
+
+  Like validcode(), if an exact match isn't available calc_distance will
+  match on sector, district or area.
+  
+  Returns false on failure. 
+  ***********************************************************************
+  *NB* 0 is a valid, good response indicating a distance of 0km or 0miles
+  Be sure to test for false (eg if($d === false)
+  ************************************************************************
+
+lasterror()
+  
+  returns the last error message generated
+
+
+Drivers
+=======
+
+textfile
+========
+The textfile driver stores postcode data in a simple text file. The following 
+parameters are available:
+
+   datafile: location of the datafile
+   fieldsep: field separator used in the datafile. Default is "\t" (tab)
+
+Data files should contain three fields, either
+
+postcode    latitude    longitude
+or 
+postcode    eastings    northings
+
+The textfile driver is useful for simple installations requiring data
+only down to sector level. It is not recommended if you have unit level
+data, unless it is for a small area only, as there are 17 million postcodes
+in Great Britain
+
+mysql
+=====
+The mysql driver stores data in a mysql database. Valid parameters are
+
+    host: mysql host to connect to
+    user: user name for mysql connection
+    pass: password for mysql connection
+    db:   database to use
+    sql:  the SQL statement to execute. This should take a single substitution,
+          %s, which is replaced by the postcode being searched. It should return 
+          two fields, eastings and northings or latitude and logtitude. Defaults are
+          "SELECT lat,long FROM postcodes WHERE postcode = '%s'" for wgs84 and
+          "SELECT east,north FROM postcodes WHERE postcode = '%s' for osgb36
+
+
+uk_postcodes
+============
+The uk_postcodes driver uses the API at http://www.uk-postcodes.com to retrieve 
+data. It caches data in a local file to minimize the load on the remote server.
+Valid parameters are:
+
+    cachefile: path to file for cache
+    cachettl: time to live in seconds for cache entries
+
+The uk_postcodes driver only handles full postcodes. Consequently the behaviour of
+validcode() is slightly different, in that it will not check for matches at sector 
+level or below.
+
+Writing drivers
+===============
+Drivers are classes that extend FindMyNearest. A driver provides a class named 
+FindMyNearest_<driver> and is stored in the file drivers/<driver>.php, where <driver>
+is the driver's name.
+
+A driver should provide a method named FindMyNearest_<driver>, which takes as an 
+argument an associative array of options. It should return true, or on error return
+false.
+
+Driver's should provide the following override methods:
+
+loaddata()
+  Takes no paramaters. Return true on success. On failure, returns false and sets
+  $this->lasterr. Does whatever needs to be done to initialise the backend connection
+  
+getgeodata($postcode)
+  Return an array of either (lat, long) or (east, north) coordinates for the supplied
+  postcode
+  
+_postcodeknown($postcode)
+  Return true if $postcode exists in the backend, false otherwise
+  
+dumpdata()
+  Does something useful for debugging. Exactly what is useful is likely to depend
+  on the driver
