@@ -1,4 +1,12 @@
 <?php
+/**
+ * Copyright 2010 Chris Hastie (http://www.oak-wood.co.uk/)
+ *
+ * See the enclosed file COPYING for license information (GPL). If you
+ * did not receive this file, see http://www.fsf.org/copyleft/gpl.html.
+ *
+ */
+ 
 ######### mysql driver ###############
 class FindMyNearest_mysql extends FindMyNearest {
     
