@@ -6,7 +6,7 @@ FindMyNearest supports several alternative data sources through
 drivers. Currently data can be got from a delimited text file, a
 mysql database or through the web API at www.uk-postcodes.com
 
-FindMyNearest is generally not to fussy about the formatting of 
+FindMyNearest is generally not too fussy about the formatting of 
 postcodes. It accepts any case, spaces between parts or not and
 partial postcodes. It even corrects the letter O at the beginning
 of an inward part, changing it to the nubmer 0.
@@ -173,7 +173,7 @@ data. It caches data in a local file to minimize the load on the remote server.
 Valid parameters are:
 
     cachefile: path to file for cache
-    cachettl: time to live in seconds for cache entries
+    cachettl: time to live in seconds for cache entries (default 604800, 1 week)
 
 The uk_postcodes driver only handles full postcodes. Consequently the behaviour of
 validcode() is slightly different, in that it will not check for matches at sector 
@@ -189,7 +189,7 @@ A driver should provide a method named FindMyNearest_<driver>, which takes as an
 argument an associative array of options. It should return true, or on error return
 false.
 
-Driver's should provide the following override methods:
+Drivers should provide the following override methods:
 
 loaddata()
   Takes no paramaters. Return true on success. On failure, returns false and sets
