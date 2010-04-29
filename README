@@ -172,7 +172,7 @@ The uk_postcodes driver uses the API at http://www.uk-postcodes.com to retrieve
 data. It caches data in a local file to minimize the load on the remote server.
 Valid parameters are:
 
-    cachefile: path to file for cache
+    cachefile: path to file for cache. Must be readable and writable by server
     cachettl: time to live in seconds for cache entries (default 604800, 1 week)
 
 The uk_postcodes driver only handles full postcodes. Consequently the behaviour of
