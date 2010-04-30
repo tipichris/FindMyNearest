@@ -1,0 +1,50 @@
+This directory contains postcode data for use with FindMyNearest.
+These data are derived from the Ordnance Survey Code Point Open
+data, and are made availabe under the Creative Commons 
+Attribution 3.0 licence, see
+http://creativecommons.org/licenses/by/3.0/
+
+Any derivitive work must retain the following attribution
+
+Contains Ordnance Survey data (c) Crown copyright and 
+database right 2010
+
+Contains Royal Mail data (c) Royal Mail copyright and 
+database right 2010 
+
+Please note the Code Point Open does not contain postcodes for
+Northern Island, the Isle of Man or the Channel Islands. The original
+dataset is available from
+
+http://www.ordnancesurvey.co.uk/oswebsite/products/code-point-open/index.html
+
+The files in this directory are:
+
+postcodes.txt
+=============
+A tab delimited text file containing calculated mean values
+for areas (eg SW), districts (SW1A) and sectors (SW1A 1). The three
+fields area
+
+postcode
+eastings
+northings
+
+postcodes.sql.gz
+================
+This file is a gzipped sql file using extended inserts, generated 
+by mysqldump. It contains all unit postcodes from the original 
+Code Point Open data except those with a Positional Quality Indicator
+of 90 (ie no location data available). It also contains calculated means
+for areas, districts and sectors.
+
+It can be sourced from mysql to create a table 
+named 'postcodes' containing the following fields:
+
+postcode:   postcode
+east:       eastings
+north:      northings
+pqi:        postitional quality indicator
+
+For unit level postcodes the PQI is derived directly from the original
+Code Point Open data. Calculated means are given a PQI of 60
