@@ -25,22 +25,23 @@
 require_once dirname(__FILE__) . '/WebServices.php';
 
 ######### uk-postcodes.com driver ###############
-class FindMyNearest_uk_postcodes extends FindMyNearest_WebServices {
+class FindMyNearest_ukgeocode extends FindMyNearest_WebServices {
     
-  var $baseurl = "http://www.uk-postcodes.com/postcode/";
-  var $ext = ".xml";
+  var $baseurl = "http://maxmanders.co.uk/ukgeocode/postcode/";
+  var $ext = "";
   var $codecache;
-  var $cachefile = "ukpcache";
+  var $cachefile = "ukgeocodecache";
   var $cachettl = 604800;    // one week
   
-  function FindMyNearest_uk_postcodes($params) {
-    /* params for uk-postcode driver: 
+  function FindMyNearest_ukgeocode($params) {
+    /* params for ukgeocode driver: 
       cachefile: path to file for cache
       cachettl: time to live in seconds for cache entries
     */
     if ($params['cachefile']) $this->cachefile = $params['cachefile'];
     if (preg_match('/^\d+$/', $params['cachettl'])) $this->cachettl = $params['cachettl'];
     $this->inoutsep = '';
+    $this->geotype = 'wgs84';
     return true;
   }
   
@@ -91,11 +92,11 @@ class FindMyNearest_uk_postcodes extends FindMyNearest_WebServices {
           return false;
         }
 
-        $data = $Unserializer->getUnserializedData();  
+        $data = $Unserializer->getUnserializedData();
         //print_r($data);
-        if ($data['postcode'] == $postcode) {
-           $this->codecache[$postcode]['wgs84'] = array($data['geo']['lat'], $data['geo']['lng']);
-           $this->codecache[$postcode]['osgb36'] = array($data['geo']['easting'], $data['geo']['northing']);
+        if ($data['coord']['postcode'] == strtoupper($postcode)) {
+           $this->codecache[$postcode]['wgs84'] = array($data['coord']['lat'], $data['coord']['lon']);
+           //$this->codecache[$postcode]['osgb36'] = array($data['geo']['easting'], $data['geo']['northing']);
            $this->codecache[$postcode]['timestamp'] = time();
         }
         else {

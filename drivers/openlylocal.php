@@ -25,22 +25,23 @@
 require_once dirname(__FILE__) . '/WebServices.php';
 
 ######### uk-postcodes.com driver ###############
-class FindMyNearest_uk_postcodes extends FindMyNearest_WebServices {
+class FindMyNearest_openlylocal extends FindMyNearest_WebServices {
     
-  var $baseurl = "http://www.uk-postcodes.com/postcode/";
+  var $baseurl = "http://www.openlylocal.com/areas/postcodes/";
   var $ext = ".xml";
   var $codecache;
-  var $cachefile = "ukpcache";
+  var $cachefile = "openlylocalcache";
   var $cachettl = 604800;    // one week
   
-  function FindMyNearest_uk_postcodes($params) {
-    /* params for uk-postcode driver: 
+  function FindMyNearest_openlylocal($params) {
+    /* params for ukgeocode driver: 
       cachefile: path to file for cache
       cachettl: time to live in seconds for cache entries
     */
     if ($params['cachefile']) $this->cachefile = $params['cachefile'];
     if (preg_match('/^\d+$/', $params['cachettl'])) $this->cachettl = $params['cachettl'];
     $this->inoutsep = '';
+    $this->geotype = 'wgs84';
     return true;
   }
   
@@ -76,7 +77,10 @@ class FindMyNearest_uk_postcodes extends FindMyNearest_WebServices {
       }
 
       if ($page['http_code'] == '200') {
-        
+        if (preg_match("/Couldn't find postcode/", $page['content'])) {
+          $this->lasterr = "Unknown postcode";
+          return false;
+        }
         require_once 'XML/Unserializer.php';
         // Array of options
         $unserializer_options = array(); 
@@ -91,11 +95,11 @@ class FindMyNearest_uk_postcodes extends FindMyNearest_WebServices {
           return false;
         }
 
-        $data = $Unserializer->getUnserializedData();  
+        $data = $Unserializer->getUnserializedData();
         //print_r($data);
-        if ($data['postcode'] == $postcode) {
-           $this->codecache[$postcode]['wgs84'] = array($data['geo']['lat'], $data['geo']['lng']);
-           $this->codecache[$postcode]['osgb36'] = array($data['geo']['easting'], $data['geo']['northing']);
+        if ($data['code'] == strtoupper($postcode)) {
+           $this->codecache[$postcode]['wgs84'] = array($data['lat'], $data['lng']);
+           //$this->codecache[$postcode]['osgb36'] = array($data['geo']['easting'], $data['geo']['northing']);
            $this->codecache[$postcode]['timestamp'] = time();
         }
         else {

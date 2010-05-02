@@ -179,6 +179,36 @@ The uk_postcodes driver only handles full postcodes. Consequently the behaviour 
 validcode() is slightly different, in that it will not check for matches at sector 
 level or below.
 
+ukgeocode
+=========
+The ukgeocode driver uses the API at http://maxmanders.co.uk/ukgeocode/ to retrieve 
+data. It caches data in a local file to minimize the load on the remote server.
+Valid parameters are:
+
+    cachefile: path to file for cache. Must be readable and writable by server
+    cachettl: time to live in seconds for cache entries (default 604800, 1 week)
+
+The ukgeocode driver only handles full postcodes. Consequently the behaviour of
+validcode() is slightly different, in that it will not check for matches at sector 
+level or below.
+
+ukgeocode uses wgs84. The driver will set this - there is no need to call use_wgs84
+
+openlylocal
+===========
+The openlylocal driver uses the API at http://www.openlylocal.com/ to retrieve 
+data. It caches data in a local file to minimize the load on the remote server.
+Valid parameters are:
+
+    cachefile: path to file for cache. Must be readable and writable by server
+    cachettl: time to live in seconds for cache entries (default 604800, 1 week)
+
+The openlylocal driver only handles full postcodes. Consequently the behaviour of
+validcode() is slightly different, in that it will not check for matches at sector 
+level or below.
+
+openlylocal uses wgs84. The driver will set this - there is no need to call use_wgs84
+
 Writing drivers
 ===============
 Drivers are classes that extend FindMyNearest. A driver provides a class named 
@@ -205,3 +235,7 @@ _postcodeknown($postcode)
 dumpdata()
   Does something useful for debugging. Exactly what is useful is likely to depend
   on the driver
+  
+When writing drivers to access web services, it may be useful to include WebServices.php
+and then write your class to extend FindMyNearest_WebServices. This provides a number of
+useful functions for accessing web services and maintaining a cache of data.
