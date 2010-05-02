@@ -107,6 +107,10 @@ splitpostcode(string $postcode)
       [3] => AA
   
   Returns false on failure
+  
+samepostcode(string $postcode1, string $postcode2)
+  Checks if $postcode1 is the same postcode as $postcode2
+  Returns true if the same, false otherwise
 
 calc_distance (string $fromcode, string $tocode[, array $options])
   

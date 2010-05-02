@@ -46,5 +46,9 @@ east:       eastings
 north:      northings
 pqi:        postitional quality indicator
 
+eg, unzip the file, then from a mysql prompt:
+
+mysql> source postcodes.sql
+
 For unit level postcodes the PQI is derived directly from the original
 Code Point Open data. Calculated means are given a PQI of 60
