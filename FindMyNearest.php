@@ -216,6 +216,13 @@ class FindMyNearest {
 
     return array($area, $district, $sector, $unit);
   }
+  
+  function samepostcode($a, $b) {
+    $aparts = $this->splitpostcode($a);
+    $bparts = $this->splitpostcode($b);
+    $diff = array_diff($aparts, $bparts);
+    return empty($diff)?true:false;
+  }
 
   function calc_distance ($from, $to, $options = array('unit' => 'mile', 'decimal' => 0)) { 
     /* 

@@ -40,7 +40,7 @@ class FindMyNearest_ukgeocode extends FindMyNearest_WebServices {
     */
     if ($params['cachefile']) $this->cachefile = $params['cachefile'];
     if (preg_match('/^\d+$/', $params['cachettl'])) $this->cachettl = $params['cachettl'];
-    $this->inoutsep = '';
+    $this->inoutsep = ' ';
     $this->geotype = 'wgs84';
     return true;
   }
@@ -62,13 +62,13 @@ class FindMyNearest_ukgeocode extends FindMyNearest_WebServices {
   }
   
   function _fetchcodedata($postcode) {
-    if (!preg_match('/^([A-Z]{1,2})([0-9][0-9A-Z]?)([0-9O])([A-Z]{2})$/', $postcode)) {
+    if (!preg_match('/^([A-Z]{1,2})([0-9][0-9A-Z]?)\s?([0-9O])([A-Z]{2})$/', $postcode)) {
       $this->lasterr = "Invalid postcode format $postcode";
       return false;
     }
     if (!isset($this->codecache[$postcode]) || $this->codecache[$postcode]['timestamp'] < time() - $this->cachettl){
       // print "Server lookup for $postcode \n";
-      $url = $this->baseurl . strtoupper($postcode) . $this->ext;
+      $url = $this->baseurl . rawurlencode(strtoupper($postcode)) . $this->ext;
 
       $page = $this->_hitserver($url);
       if ($page['errno']) {
@@ -94,7 +94,7 @@ class FindMyNearest_ukgeocode extends FindMyNearest_WebServices {
 
         $data = $Unserializer->getUnserializedData();
         //print_r($data);
-        if ($data['coord']['postcode'] == strtoupper($postcode)) {
+        if ($this->samepostcode($data['coord']['postcode'], $postcode)) {
            $this->codecache[$postcode]['wgs84'] = array($data['coord']['lat'], $data['coord']['lon']);
            //$this->codecache[$postcode]['osgb36'] = array($data['geo']['easting'], $data['geo']['northing']);
            $this->codecache[$postcode]['timestamp'] = time();

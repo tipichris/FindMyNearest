@@ -66,8 +66,8 @@ class FindMyNearest_uk_postcodes extends FindMyNearest_WebServices {
       return false;
     }
     if (!isset($this->codecache[$postcode]) || $this->codecache[$postcode]['timestamp'] < time() - $this->cachettl){
-      // print "Server lookup for $postcode \n";
-      $url = $this->baseurl . strtoupper($postcode) . $this->ext;
+      //print "Server lookup for $postcode \n";
+      $url = $this->baseurl . rawurlencode(strtoupper($postcode)) . $this->ext;
 
       $page = $this->_hitserver($url);
       if ($page['errno']) {
@@ -76,7 +76,7 @@ class FindMyNearest_uk_postcodes extends FindMyNearest_WebServices {
       }
 
       if ($page['http_code'] == '200') {
-        
+      
         require_once 'XML/Unserializer.php';
         // Array of options
         $unserializer_options = array(); 
@@ -93,7 +93,7 @@ class FindMyNearest_uk_postcodes extends FindMyNearest_WebServices {
 
         $data = $Unserializer->getUnserializedData();  
         //print_r($data);
-        if ($data['postcode'] == $postcode) {
+        if ($this->samepostcode($data['postcode'], $postcode)) {
            $this->codecache[$postcode]['wgs84'] = array($data['geo']['lat'], $data['geo']['lng']);
            $this->codecache[$postcode]['osgb36'] = array($data['geo']['easting'], $data['geo']['northing']);
            $this->codecache[$postcode]['timestamp'] = time();
