@@ -34,8 +34,9 @@ Methods
 
 factory(string $driver, array $params)
 
-  Create a new instance. $driver is currently one of 'textfile', 'mysql' 
-  or 'uk_postcodes'. Valid values for $params depend on the driver chosen.
+  Create a new instance. $driver is currently one of 'textfile', 'mysql', 
+  'uk_postcodes', 'ukgeocode' or 'openlylocal'. Valid values for $params 
+  depend on the driver chosen.
   
 loaddata()
 
@@ -68,7 +69,7 @@ use_osgb36()
   can provide data in either wgs84 or osgb36. The latter makes distance
   calculations less demanding
 
-validcode(string $postcode)
+validcode(string $postcode [, bool $exactmatch])
 
   Tests if a postcode is valid and known in the database. Returns the found
   code on success, false on failure. 
@@ -76,6 +77,9 @@ validcode(string $postcode)
   If the full code is not found, checks will be made for matches by sector
   (SW1A 1), district (SW1A) and area (SW1). The return value is the best 
   match.
+  
+  If $exactmatch is true (defaults to false), matches only if the $postcode
+  is known (after normalising $postcode).
 
 set_grain(int $grain)
 

@@ -35,7 +35,8 @@ class FindMyNearest {
     /*
     Create in an instance of the required subclass
     $driver is the driver for data, currently
-    either 'textfile', 'mysql' or 'uk_postcodes'
+    either 'textfile', 'mysql', 'uk_postcodes', 'ukgeocode'
+    or 'openlylocal'
     $params is an associative array of values required
     by the selected driver
     */
@@ -111,28 +112,45 @@ class FindMyNearest {
     $this->geotype = 'osgb36';
   }
 
-  function validcode($in_postcode) {
+  function validcode($in_postcode, $exactmatch = false ) {
     /*
     Checks if a postcode is known in some way
     in the database. First looks for full code, then 
     sector, then district, then area.
     Returns the code found on success, 0 on failure
+    If $exactmatch is true, will match only the normalised
+    postcode passed
     */
     
     if (! $postcode = $this->splitpostcode($in_postcode)) { 
       return false;
     }
     
-    $try = array($postcode[0] . $postcode[1] . $this->inoutsep . $postcode[2] . $postcode[3],
-      $postcode[0] . $postcode[1] . $this->inoutsep . $postcode[2],
-      $postcode[0] . $postcode[1],
-      $postcode[0]
-    );
+    if ($exactmatch) {
+      $normalised = $postcode[0];
+      if (!empty($postcode[1])) { 
+        $normalised .= $postcode[1];
+        if (!empty($postcode[2])) {
+          $normalised .= $this->inoutsep;
+          $normalised .= $postcode[2];
+          if (!empty($postcode[3])) {
+            $normalised .= $postcode[3];
+          }
+        }
+      }
+      $try = array($normalised);
+    } else {
+      $try = array($postcode[0] . $postcode[1] . $this->inoutsep . $postcode[2] . $postcode[3],
+        $postcode[0] . $postcode[1] . $this->inoutsep . $postcode[2],
+        $postcode[0] . $postcode[1],
+        $postcode[0]
+      );
 
-    if ($this->grain < 4) { array_shift($try); } 
-    if ($this->grain < 3) { array_shift($try); } 
-    if ($this->grain < 2) { array_shift($try); } 
-       
+      if ($this->grain < 4) { array_shift($try); } 
+      if ($this->grain < 3) { array_shift($try); } 
+      if ($this->grain < 2) { array_shift($try); } 
+    }
+    
     foreach ($try as $thistry) {
       if ($this->_postcodeknown($thistry)) {
         return $thistry;
