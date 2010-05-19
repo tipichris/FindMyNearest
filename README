@@ -184,7 +184,7 @@ The uk_postcodes driver uses the API at http://www.uk-postcodes.com to retrieve
 data. It caches data in a local file to minimize the load on the remote server.
 Valid parameters are:
 
-    cachefile: path to file for cache. Must be readable and writable by server
+    cachefile: path to file for cache. Must be readable and writeable by server
     cachettl: time to live in seconds for cache entries (default 604800, 1 week)
 
 The uk_postcodes driver only handles full postcodes. Consequently the behaviour of
@@ -197,7 +197,7 @@ The ukgeocode driver uses the API at http://maxmanders.co.uk/ukgeocode/ to retri
 data. It caches data in a local file to minimize the load on the remote server.
 Valid parameters are:
 
-    cachefile: path to file for cache. Must be readable and writable by server
+    cachefile: path to file for cache. Must be readable and writeable by server
     cachettl: time to live in seconds for cache entries (default 604800, 1 week)
 
 The ukgeocode driver only handles full postcodes. Consequently the behaviour of
@@ -212,7 +212,7 @@ The openlylocal driver uses the API at http://www.openlylocal.com/ to retrieve
 data. It caches data in a local file to minimize the load on the remote server.
 Valid parameters are:
 
-    cachefile: path to file for cache. Must be readable and writable by server
+    cachefile: path to file for cache. Must be readable and writeable by server
     cachettl: time to live in seconds for cache entries (default 604800, 1 week)
 
 The openlylocal driver only handles full postcodes. Consequently the behaviour of
@@ -227,7 +227,7 @@ The geopostcode driver uses the API at http://www.geopostcode.org.uk to retrieve
 data. It caches data in a local file to minimize the load on the remote server.
 Valid parameters are:
 
-    cachefile: path to file for cache. Must be readable and writable by server
+    cachefile: path to file for cache. Must be readable and writeable by server
     cachettl: time to live in seconds for cache entries (default 604800, 1 week)
 
 Writing drivers
