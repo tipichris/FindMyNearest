@@ -68,7 +68,7 @@ class FindMyNearest_geopostcode extends FindMyNearest_WebServices {
 
   function _fetchcodedata($postcode) {
     if (!isset($this->codecache[$postcode]) || $this->codecache[$postcode]['timestamp'] < time() - $this->cachettl){
-      print "Server lookup for $postcode \n";
+      //print "Server lookup for $postcode \n";
       $url = $this->baseurl . rawurlencode(strtoupper($postcode)) . $this->ext;
 
       $page = $this->_hitserver($url);
