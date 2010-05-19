@@ -116,6 +116,10 @@ samepostcode(string $postcode1, string $postcode2)
   Checks if $postcode1 is the same postcode as $postcode2
   Returns true if the same, false otherwise
 
+normalise ($postcode) 
+  Returns a normalised version of $postcode, taking account of the current
+  setting of $inoutsep
+  
 calc_distance (string $fromcode, string $tocode[, array $options])
   
   calculate the distance between $fromcode and $tocode. 
@@ -216,6 +220,15 @@ validcode() is slightly different, in that it will not check for matches at sect
 level or below.
 
 openlylocal uses wgs84. The driver will set this - there is no need to call use_wgs84
+
+geopostcode
+===========
+The geopostcode driver uses the API at http://www.geopostcode.org.uk to retrieve 
+data. It caches data in a local file to minimize the load on the remote server.
+Valid parameters are:
+
+    cachefile: path to file for cache. Must be readable and writable by server
+    cachettl: time to live in seconds for cache entries (default 604800, 1 week)
 
 Writing drivers
 ===============

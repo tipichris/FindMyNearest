@@ -121,25 +121,16 @@ class FindMyNearest {
     If $exactmatch is true, will match only the normalised
     postcode passed
     */
-    
-    if (! $postcode = $this->splitpostcode($in_postcode)) { 
-      return false;
-    }
-    
+
     if ($exactmatch) {
-      $normalised = $postcode[0];
-      if (!empty($postcode[1])) { 
-        $normalised .= $postcode[1];
-        if (!empty($postcode[2])) {
-          $normalised .= $this->inoutsep;
-          $normalised .= $postcode[2];
-          if (!empty($postcode[3])) {
-            $normalised .= $postcode[3];
-          }
-        }
+      if (! $normalised = $this->normalise($in_postcode) ) {
+        return false;
       }
       $try = array($normalised);
     } else {
+      if (! $postcode = $this->splitpostcode($in_postcode)) {
+        return false;
+      }    
       $try = array($postcode[0] . $postcode[1] . $this->inoutsep . $postcode[2] . $postcode[3],
         $postcode[0] . $postcode[1] . $this->inoutsep . $postcode[2],
         $postcode[0] . $postcode[1],
@@ -162,6 +153,23 @@ class FindMyNearest {
     return false;
   }
 
+  function normalise($in_postcode) {
+    if (! $postcode = $this->splitpostcode($in_postcode)) {
+      return false;
+    }
+    $normalised = $postcode[0];
+    if (!empty($postcode[1])) { 
+      $normalised .= $postcode[1];
+      if (!empty($postcode[2])) {
+        $normalised .= $this->inoutsep;
+        $normalised .= $postcode[2];
+        if (!empty($postcode[3])) {
+          $normalised .= $postcode[3];
+        }
+      }
+    }
+    return $normalised;
+  }
 
   function splitpostcode ($in_postcode) {
     /* 
