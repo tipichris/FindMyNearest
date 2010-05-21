@@ -23,7 +23,7 @@
 
 class FindMyNearest {
   
-  var $VERSION = '0.4';
+  var $VERSION = '0.5rc1';
  
   var $lasterr = '';        // the last error
   var $grain = 4;           // smallest checked unit (see setgrain)
