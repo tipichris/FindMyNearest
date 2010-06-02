@@ -21,12 +21,17 @@ require 'FindMyNearest.php';
 
 $fmn = FindMyNearest::factory('textfile', array('datafile' => 'postcodes.txt'));
 
+if (! $fmn->loaddata()) {
+  echo "Error loading data: " . $fmn->lasterror() . "\n";
+  exit;
+}
+
 $goodcode = $fmn->validcode('SW1A 1AA');    // Check if we know about a code
 
 $distance = $fmn->calc_distance('SW1A 1AA', 'CV32 5HZ'); // calculate distance
 
 if ($distance === false) {
-  print "The was an error " . $fmn->lasterror();
+  echo "The was an error " . $fmn->lasterror();
 }
 
 Methods
@@ -35,8 +40,8 @@ Methods
 factory(string $driver, array $params)
 
   Create a new instance. $driver is currently one of 'textfile', 'mysql', 
-  'uk_postcodes', 'ukgeocode' or 'openlylocal'. Valid values for $params 
-  depend on the driver chosen.
+  'uk_postcodes', 'ukgeocode', 'geopostcode' or 'openlylocal'. Valid values
+  for $params depend on the driver chosen.
   
 loaddata()
 
