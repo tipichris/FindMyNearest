@@ -83,6 +83,39 @@ class FindMyNearest_WebServices extends FindMyNearest {
       file_put_contents($this->cachefile, $serial);
   }
 
+  function dumpdata() {
+    print_r($this->codecache);
+  }
+
+  function loaddata() {
+     return $this->_loadcache();
+  }
+
+  function getgeodata($postcode) {
+    $codedata = $this->_fetchcodedata($postcode);
+    if(!empty($codedata)) {
+      if(isset($codedata[$this->geotype])) {
+        return $codedata[$this->geotype];
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
+
+  function _postcodeknown($postcode) {
+    if($this->_fetchcodedata($postcode)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  function __destruct() {
+    $this->_savecache();
+  }
+
 }
 
 ?>

@@ -45,27 +45,6 @@ class FindMyNearest_geopostcode extends FindMyNearest_WebServices {
     return true;
   }
 
-  function loaddata() {
-     return $this->_loadcache();
-  }
-
-  function getgeodata($postcode) {
-    $codedata = $this->_fetchcodedata($postcode);
-    if(!empty($codedata)) {
-      return $codedata[$this->geotype];
-    } else {
-      return false;
-    }
-  }
-
-  function _postcodeknown($postcode) {
-    if($this->_fetchcodedata($postcode)) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
   function _fetchcodedata($postcode) {
     if (!isset($this->codecache[$postcode]) || $this->codecache[$postcode]['timestamp'] < time() - $this->cachettl){
       //print "Server lookup for $postcode \n";
@@ -144,19 +123,11 @@ class FindMyNearest_geopostcode extends FindMyNearest_WebServices {
 
     if (!empty($exactmatch) && (!$this->samepostcode($codedata['match'], $normalised))) {
       $this->lasterr = "'$in_postcode' is not a known postcode";    
-      return false;    
+      return false;
     }
 
     return $codedata['match'];
   }
 
-  function dumpdata() {
-    print_r($this->codecache);
-  }
-
-
-   function __destruct() {
-     $this->_savecache();
-   }
 }
 ?>

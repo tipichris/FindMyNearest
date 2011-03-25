@@ -34,7 +34,7 @@ class FindMyNearest_openlylocal extends FindMyNearest_WebServices {
   var $cachettl = 604800;    // one week
   
   function FindMyNearest_openlylocal($params) {
-    /* params for ukgeocode driver: 
+    /* params for openlylocal driver: 
       cachefile: path to file for cache
       cachettl: time to live in seconds for cache entries
     */
@@ -44,23 +44,12 @@ class FindMyNearest_openlylocal extends FindMyNearest_WebServices {
     $this->geotype = 'wgs84';
     return true;
   }
-  
-  function loaddata() {
-     return $this->_loadcache();
+
+  // override as no osgb36 available
+  function use_osgb36 () {
+    return false;
   }
-  
-  function getgeodata($postcode) {
-    return $this->_fetchcodedata($postcode);
-  }
-  
-  function _postcodeknown($postcode) {
-    if($this->_fetchcodedata($postcode)) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-  
+
   function _fetchcodedata($postcode) {
     if (!preg_match('/^([A-Z]{1,2})([0-9][0-9A-Z]?)\s?([0-9O])([A-Z]{2})$/', $postcode)) {
       $this->lasterr = "Invalid postcode format $postcode";
@@ -69,7 +58,7 @@ class FindMyNearest_openlylocal extends FindMyNearest_WebServices {
     if (!isset($this->codecache[$postcode]) || $this->codecache[$postcode]['timestamp'] < time() - $this->cachettl){
       // print "Server lookup for $postcode \n";
       $url = $this->baseurl . rawurlencode(strtoupper($postcode)) . $this->ext;
-print "fetch $url \n";
+
       $page = $this->_hitserver($url);
       if ($page['errno']) {
         $this->lasterr =  "Failed to retrieve data from server: " . $page['errmsg'];
@@ -113,19 +102,11 @@ print "fetch $url \n";
 
     }
     if (isset($this->codecache[$postcode][$this->geotype])) {
-      return $this->codecache[$postcode][$this->geotype];
+      return $this->codecache[$postcode];
     } else {
       return false;
     }
   }
-  
-  function dumpdata() {
-    print_r($this->codecache);
-  }
 
-
-   function __destruct() {
-     $this->_savecache();
-   }
 }
 ?>

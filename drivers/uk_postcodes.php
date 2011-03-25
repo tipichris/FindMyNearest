@@ -43,23 +43,7 @@ class FindMyNearest_uk_postcodes extends FindMyNearest_WebServices {
     $this->inoutsep = '';
     return true;
   }
-  
-  function loaddata() {
-     return $this->_loadcache();
-  }
-  
-  function getgeodata($postcode) {
-    return $this->_fetchcodedata($postcode);
-  }
-  
-  function _postcodeknown($postcode) {
-    if($this->_fetchcodedata($postcode)) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-  
+
   function _fetchcodedata($postcode) {
     if (!preg_match('/^([A-Z]{1,2})([0-9][0-9A-Z]?)([0-9O])([A-Z]{2})$/', $postcode)) {
       $this->lasterr = "Invalid postcode format $postcode";
@@ -108,20 +92,12 @@ class FindMyNearest_uk_postcodes extends FindMyNearest_WebServices {
       }
 
     }
-    if (isset($this->codecache[$postcode][$this->geotype])) {
-      return $this->codecache[$postcode][$this->geotype];
+    if (isset($this->codecache[$postcode])) {
+      return $this->codecache[$postcode];
     } else {
       return false;
     }
   }
-  
-  function dumpdata() {
-    print_r($this->codecache);
-  }
 
-
-   function __destruct() {
-     $this->_savecache();
-   }
 }
 ?>

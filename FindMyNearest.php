@@ -23,7 +23,7 @@
 
 class FindMyNearest {
   
-  var $VERSION = '0.5rc1';
+  var $VERSION = '0.5rc2';
  
   var $lasterr = '';        // the last error
   var $grain = 4;           // smallest checked unit (see setgrain)
@@ -285,7 +285,7 @@ class FindMyNearest {
     $km = sprintf("%." . $dec . "f", $distance / 1000);
     $miles = sprintf("%." . $dec . "f", $distance / 1609);
     
-    if ($options['unit'] == 'km') {
+    if (isset($options['unit']) && $options['unit'] == 'km') {
       return $km;
     } else {
       return $miles;
