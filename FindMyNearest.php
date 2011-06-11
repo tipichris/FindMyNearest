@@ -4,7 +4,7 @@
  * This file is part of FindMyNearest, a PHP class for working with UK
  * postcodes.
  *
- * Copyright 2010 Chris Hastie (http://www.oak-wood.co.uk/)
+ * Copyright 2010 - 2011 Chris Hastie (http://www.oak-wood.co.uk/)
  *
  * FindMyNearest is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 
 class FindMyNearest {
   
-  var $VERSION = '0.5rc2';
+  var $VERSION = '0.5rc3';
  
   var $lasterr = '';        // the last error
   var $grain = 4;           // smallest checked unit (see setgrain)
@@ -44,7 +44,7 @@ class FindMyNearest {
     require_once dirname(__FILE__) . '/drivers/' . $driver . '.php';
     $class = 'FindMyNearest_' . $driver;
     if (class_exists($class)) {
-        $fmn = &new $class($params);
+        $fmn = new $class($params);
     } else {
         $fmn = false;
     } 

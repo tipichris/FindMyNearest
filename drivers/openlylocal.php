@@ -75,7 +75,7 @@ class FindMyNearest_openlylocal extends FindMyNearest_WebServices {
         $unserializer_options = array(); 
 
         // Instantiate the unserializer
-        $Unserializer = &new XML_Unserializer($unserializer_options);
+        $Unserializer = new XML_Unserializer($unserializer_options);
         $status = $Unserializer->unserialize($page['content'], FALSE);
 
         // Check whether serialization worked
