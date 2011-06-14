@@ -23,7 +23,7 @@
 
 class FindMyNearest {
   
-  var $VERSION = '0.5rc3';
+  var $VERSION = '0.5rc4';
  
   var $lasterr = '';        // the last error
   var $grain = 4;           // smallest checked unit (see setgrain)
@@ -158,9 +158,9 @@ class FindMyNearest {
       return false;
     }
     $normalised = $postcode[0];
-    if (!empty($postcode[1])) { 
+    if (!empty($postcode[1]) || $postcode[2] === '0') {
       $normalised .= $postcode[1];
-      if (!empty($postcode[2])) {
+      if (!empty($postcode[2]) || $postcode[2] === '0') {
         $normalised .= $this->inoutsep;
         $normalised .= $postcode[2];
         if (!empty($postcode[3])) {
