@@ -158,7 +158,7 @@ class FindMyNearest {
       return false;
     }
     $normalised = $postcode[0];
-    if (!empty($postcode[1]) || $postcode[2] === '0') {
+    if (!empty($postcode[1]) || $postcode[1] === '0') {
       $normalised .= $postcode[1];
       if (!empty($postcode[2]) || $postcode[2] === '0') {
         $normalised .= $this->inoutsep;
